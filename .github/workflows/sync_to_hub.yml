@@ -1,0 +1,37 @@
+name: Sync to Hugging Face Hub
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository and enable LFS
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Convert existing binary files to LFS (CRITICAL FIX)
+        run: |
+          git lfs install
+          
+          echo "Starting LFS migration for all relevant files..."
+
+          git lfs migrate import --include="*.pkl,*.jpg,*.jpeg,*.png" --everything
+          
+          echo "LFS migration complete."
+
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: vel740
+          SPACE_NAME: concrete-crack-prediction-app
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          
+          # Push dengan force untuk mengatasi konflik history dan LFS migration
+          git push --force https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME main
