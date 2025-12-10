@@ -1,0 +1,5 @@
+scikit-learn
+scikit-image
+gradio
+numpy
+opencv-python-headless
