@@ -23,4 +23,14 @@ jobs:
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
+          
+          git lfs install
+          
+          git lfs track "*.pkl"
+          
+          git add .gitattributes
+          
+          git commit -m "Setup Git LFS for model" || echo "LFS already setup"
+          
+          # 5. Push Paksa (Mengatasi masalah history conflict)
           git push --force https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/$SPACE_NAME main
