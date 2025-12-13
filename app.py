@@ -33,14 +33,14 @@ def extract_features(image):
 def analyze_crack(image):
     if image is None:
         return (
-            "<div class='status-card neutral'><div class='icon'>📷</div><div class='text-content'>Upload an Image</div><div class='subtitle'>Drop your concrete image here</div></div>", 
+            "<div class='status-card neutral'><div class='text-content'>Upload an Image</div><div class='subtitle'>Drop your concrete image here</div></div>", 
             "<div class='metric-card'><div class='metric-value'>-</div></div>", 
             "<div class='metric-card'><div class='metric-value'>-</div></div>"
         )
     
     if model is None:
         return (
-            "<div class='status-card error'><div class='icon'>⚠️</div><div class='text-content'>Model Error</div></div>", 
+            "<div class='status-card error'><div class='text-content'>Model Error</div></div>", 
             "<div class='metric-card'><div class='metric-value'>-</div></div>", 
             "<div class='metric-card'><div class='metric-value'>-</div></div>"
         )
@@ -59,7 +59,6 @@ def analyze_crack(image):
         if prediction == 1:
             res_html = f"""
             <div class='status-card danger'>
-                <div class='icon'>🔴</div>
                 <div class='text-content'>Crack Detected</div>
                 <div class='subtitle'>Immediate inspection recommended</div>
             </div>
@@ -67,7 +66,6 @@ def analyze_crack(image):
         else:
             res_html = f"""
             <div class='status-card safe'>
-                <div class='icon'>✅</div>
                 <div class='text-content'>No Crack Detected</div>
                 <div class='subtitle'>Structure appears safe</div>
             </div>
@@ -78,7 +76,7 @@ def analyze_crack(image):
         return res_html, conf_html, time_html
     except Exception as e:
         return (
-            f"<div class='status-card error'><div class='icon'>⚠️</div><div class='text-content'>Error</div><div class='subtitle'>{str(e)}</div></div>", 
+            f"<div class='status-card error'><div class='text-content'>Error</div><div class='subtitle'>{str(e)}</div></div>", 
             "<div class='metric-card'><div class='metric-value'>-</div></div>", 
             "<div class='metric-card'><div class='metric-value'>-</div></div>"
         )
@@ -294,49 +292,38 @@ h3 {
 }
 """
 
-with gr.Blocks(css=custom_css, title="AI Crack Detector", theme=gr.themes.Soft()) as demo:
+with gr.Blocks(css=custom_css, title="Crack Detector", theme=gr.themes.Soft()) as demo:
     
     gr.Markdown(
         """
         <div class="title-container">
-            <h1>🏗️ AI Crack Detection System</h1>
-            <p>Advanced concrete crack detection powered by machine learning</p>
+            <h1>Crack Detection System</h1>
         </div>
         """
     )
     
-    with gr.Row():
+    with gr.Row(equal_height=True):
         with gr.Column(scale=1):
             input_img = gr.Image(
-                label="📸 Upload Image", 
+                label="Upload Image", 
                 sources=["upload", "webcam", "clipboard"], 
                 type="numpy",
                 height=400,
                 elem_classes="image-container"
             )
-            analyze_btn = gr.Button("🔍 Analyze Image", variant="primary", size="lg")
-            gr.Markdown(
-                """
-                <div style='text-align: center; margin-top: 16px; color: #64748b; font-size: 14px;'>
-                    Supported: JPG, PNG, WebP • Max 10MB
-                </div>
-                """
-            )
+            analyze_btn = gr.Button("Analyze Image", variant="primary", size="lg")
         
         with gr.Column(scale=1):
-            gr.Markdown("### 📊 Analysis Results")
+            gr.Markdown("Analysis Results")
             res_out = gr.HTML(
-                label="Status",
-                value="<div class='status-card neutral'><div class='icon'>📷</div><div class='text-content'>Ready to Analyze</div><div class='subtitle'>Upload an image to get started</div></div>"
-            )            
+                value="<div class='status-card neutral'><div class='text-content'>Ready to Analyze</div><div class='subtitle'>Upload an image to get started</div></div>"
+            )
             
             with gr.Row():
                 with gr.Column():
-                    gr.HTML("<span class='metric-label'>🎯 Confidence</span>")
                     conf_out = gr.HTML(value="<div class='metric-card'><div class='metric-value'>-</div></div>")
                 
                 with gr.Column():
-                    gr.HTML("<span class='metric-label'>⚡ Speed</span>")
                     time_out = gr.HTML(value="<div class='metric-card'><div class='metric-value'>-</div></div>")
 
     analyze_btn.click(
