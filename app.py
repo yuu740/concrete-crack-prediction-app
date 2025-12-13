@@ -59,14 +59,14 @@ def analyze_crack(image):
         if prediction == 1:
             res_html = f"""
             <div class='status-card danger'>
-                <div class='text-content'>Crack Detected</div>
+                <div class='text-content-danger'>Crack Detected</div>
                 <div class='subtitle'>Immediate inspection recommended</div>
             </div>
             """
         else:
             res_html = f"""
             <div class='status-card safe'>
-                <div class='text-content'>No Crack Detected</div>
+                <div class='text-content-safe'>No Crack Detected</div>
                 <div class='subtitle'>Structure appears safe</div>
             </div>
             """
@@ -88,9 +88,13 @@ custom_css = """
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
+/* Memperlebar container utama */
 .gradio-container {
-    max-width: 1400px !important;
+    max-width: 98% !important; 
+    width: 98% !important;
     margin: auto !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
 }
 
 body {
@@ -101,13 +105,28 @@ body {
     background: rgba(255, 255, 255, 0.98) !important;
     backdrop-filter: blur(20px) !important;
     border-radius: 24px !important;
-    padding: 40px !important;
+    padding: 30px !important;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Memaksa Layout Kiri-Kanan */
+.two-col {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 30px !important;
+    align-items: flex-start !important;
+}
+
+/* Agar tetap responsif di layar HP kecil, baru dia menumpuk */
+@media (max-width: 800px) {
+    .two-col {
+        flex-direction: column !important;
+    }
 }
 
 .title-container {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     padding: 0;
     background: transparent;
     border: none;
@@ -124,13 +143,7 @@ body {
     letter-spacing: -0.5px;
 }
 
-.title-container p {
-    color: #64748b;
-    font-size: 1.1em;
-    margin-top: 12px;
-    font-weight: 500;
-}
-
+/* Status Cards Styling (unchanged) */
 .status-card {
     display: flex;
     flex-direction: column;
@@ -144,6 +157,7 @@ body {
     min-height: 200px;
     position: relative;
     overflow: hidden;
+    height: 100%; /* Fill available height */
 }
 
 .status-card::before {
@@ -157,19 +171,30 @@ body {
     opacity: 0.6;
 }
 
-.icon {
-    font-size: 64px;
-    margin-bottom: 16px;
-    animation: fadeInScale 0.5s ease;
-}
-
 .text-content {
     font-size: 28px;
     font-weight: 700;
     letter-spacing: -0.5px;
     margin-bottom: 8px;
 }
+.text-content-danger {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    # margin-bottom: 8px;
+    margin-top: 12px;
+    color: #dc2626; 
 
+}
+.text-content-safe {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    # margin-bottom: 8px;
+    margin-top: 12px;
+    color: #047857; 
+
+}
 .subtitle {
     font-size: 15px;
     opacity: 0.75;
@@ -213,11 +238,6 @@ body {
     height: 100%;
 }
 
-.metric-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-
 .metric-value {
     font-size: 32px;
     font-weight: 800;
@@ -225,17 +245,6 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-}
-
-.metric-label {
-    font-size: 13px;
-    text-transform: uppercase;
-    color: #64748b;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-    text-align: center;
-    display: block;
 }
 
 button.primary {
@@ -249,6 +258,7 @@ button.primary {
     box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4) !important;
     transition: all 0.3s ease !important;
     letter-spacing: 0.5px;
+    margin-top: 20px !important;
 }
 
 button.primary:hover {
@@ -261,13 +271,14 @@ button.primary:hover {
     overflow: hidden !important;
     border: 2px solid #e2e8f0 !important;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+    height: auto !important;
 }
 
 h3 {
     font-size: 1.4em !important;
     font-weight: 700 !important;
-    color: #1e293b !important;
-    margin-bottom: 20px !important;
+    color: #475569 !important; /* Fixed visibility against white background */
+    margin-bottom: 15px !important;
     letter-spacing: -0.5px;
 }
 
@@ -279,19 +290,9 @@ h3 {
         box-shadow: 0 8px 32px rgba(239, 68, 68, 0.4), 0 0 0 8px rgba(239, 68, 68, 0.1);
     }
 }
-
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
 """
 
+# --- APP LAYOUT ---
 with gr.Blocks(css=custom_css, title="Crack Detector", theme=gr.themes.Soft()) as demo:
     
     gr.Markdown(
@@ -301,30 +302,41 @@ with gr.Blocks(css=custom_css, title="Crack Detector", theme=gr.themes.Soft()) a
         </div>
         """
     )
-    
-    with gr.Row(equal_height=True):
-        with gr.Column(scale=1):
+
+    with gr.Row(elem_classes="two-col"):
+
+        # KOLOM KIRI (INPUT)
+        with gr.Column(scale=1): 
+            gr.Markdown("### Input Image")
             input_img = gr.Image(
-                label="Upload Image", 
-                sources=["upload", "webcam", "clipboard"], 
+                label=None,
+                sources=["upload", "webcam", "clipboard"],
                 type="numpy",
-                height=400,
+                height=450,
                 elem_classes="image-container"
             )
-            analyze_btn = gr.Button("Analyze Image", variant="primary", size="lg")
-        
+            analyze_btn = gr.Button("Analyze Structure", variant="primary", size="lg")
+
         with gr.Column(scale=1):
-            gr.Markdown("Analysis Results")
+            gr.Markdown("### Analysis Results")
+
             res_out = gr.HTML(
-                value="<div class='status-card neutral'><div class='text-content'>Ready to Analyze</div><div class='subtitle'>Upload an image to get started</div></div>"
+                value="""
+                <div class='status-card neutral'>
+                    <div class='text-content'>Ready</div>
+                    <div class='subtitle'>System Awaiting Input</div>
+                </div>
+                """
             )
             
-            with gr.Row():
-                with gr.Column():
-                    conf_out = gr.HTML(value="<div class='metric-card'><div class='metric-value'>-</div></div>")
-                
-                with gr.Column():
-                    time_out = gr.HTML(value="<div class='metric-card'><div class='metric-value'>-</div></div>")
+            # Row kecil di dalam kolom kanan untuk metrik
+            with gr.Row(elem_id="metrics-row"):
+                with gr.Column(min_width=100):
+                    gr.Markdown("<div style='text-align:center; color:#64748b; font-weight:700; margin-bottom:5px'>CONFIDENCE</div>")
+                    conf_out = gr.HTML("<div class='metric-card'><div class='metric-value'>-</div></div>")
+                with gr.Column(min_width=100):
+                    gr.Markdown("<div style='text-align:center; color:#64748b; font-weight:700; margin-bottom:5px'>LATENCY</div>")
+                    time_out = gr.HTML("<div class='metric-card'><div class='metric-value'>-</div></div>")
 
     analyze_btn.click(
         analyze_crack, 
