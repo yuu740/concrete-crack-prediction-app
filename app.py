@@ -5,6 +5,7 @@ import numpy as np
 from skimage.feature import hog
 import time
 
+# --- LOGIC SECTON ---
 try:
     model = joblib.load("final_crack_detector_rf.pkl")
 except Exception as e:
@@ -59,14 +60,14 @@ def analyze_crack(image):
         if prediction == 1:
             res_html = f"""
             <div class='status-card danger'>
-                <div class='text-content-danger'>Crack Detected</div>
+                <div class='text-content'>Crack Detected</div>
                 <div class='subtitle'>Immediate inspection recommended</div>
             </div>
             """
         else:
             res_html = f"""
             <div class='status-card safe'>
-                <div class='text-content-safe'>No Crack Detected</div>
+                <div class='text-content'>No Crack Detected</div>
                 <div class='subtitle'>Structure appears safe</div>
             </div>
             """
@@ -81,6 +82,7 @@ def analyze_crack(image):
             "<div class='metric-card'><div class='metric-value'>-</div></div>"
         )
 
+# --- DARK THEME CSS ---
 custom_css = """
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -88,7 +90,13 @@ custom_css = """
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-/* Memperlebar container utama */
+/* Background Utama Halaman */
+body, .gradio-container {
+    background-color: #0f172a !important; /* Biru Gelap hampir hitam */
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%) !important;
+    color: #e2e8f0 !important; /* Warna text dasar putih abu */
+}
+
 .gradio-container {
     max-width: 98% !important; 
     width: 98% !important;
@@ -97,19 +105,17 @@ custom_css = """
     padding-right: 20px !important;
 }
 
-body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-}
-
+/* Container Komponen Utama (Kotak Besar) */
 #component-0 {
-    background: rgba(255, 255, 255, 0.98) !important;
+    background: rgba(30, 41, 59, 0.7) !important; /* Dark Blue transparan */
     backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 24px !important;
     padding: 30px !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Memaksa Layout Kiri-Kanan */
+/* Layout Kiri-Kanan */
 .two-col {
     display: flex !important;
     flex-direction: row !important;
@@ -117,33 +123,28 @@ body {
     align-items: flex-start !important;
 }
 
-/* Agar tetap responsif di layar HP kecil, baru dia menumpuk */
 @media (max-width: 800px) {
     .two-col {
         flex-direction: column !important;
     }
 }
 
-.title-container {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 0;
-    background: transparent;
-    border: none;
-}
-
 .title-container h1 {
     font-size: 2.5em !important;
     font-weight: 800 !important;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 100%); /* Judul Ungu Muda Terang */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin: 0 !important;
-    letter-spacing: -0.5px;
 }
 
-/* Status Cards Styling (unchanged) */
+/* Labels (Input Image, etc) */
+span, label, p {
+    color: #cbd5e1 !important;
+}
+
+/* --- STATUS CARDS (DARK MODE) --- */
 .status-card {
     display: flex;
     flex-direction: column;
@@ -152,148 +153,111 @@ body {
     padding: 40px 30px;
     border-radius: 20px;
     font-weight: 600;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 200px;
+    height: 100%;
     position: relative;
-    overflow: hidden;
-    height: 100%; /* Fill available height */
-}
-
-.status-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, currentColor, transparent);
-    opacity: 0.6;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .text-content {
     font-size: 28px;
     font-weight: 700;
-    letter-spacing: -0.5px;
     margin-bottom: 8px;
+    color: #ffffff;
 }
-.text-content-danger {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    # margin-bottom: 8px;
-    margin-top: 12px;
-    color: #dc2626; 
 
-}
-.text-content-safe {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    # margin-bottom: 8px;
-    margin-top: 12px;
-    color: #047857; 
-
-}
 .subtitle {
     font-size: 15px;
-    opacity: 0.75;
+    opacity: 0.8;
     font-weight: 500;
-    margin-top: 8px;
+    color: #e2e8f0;
 }
 
+/* Neutral State (Dark Grey) */
 .neutral { 
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    color: #64748b; 
-    border: 2px dashed #cbd5e1; 
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px dashed #475569; 
 }
 
+/* Safe State (Dark Green) */
 .safe { 
-    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-    color: #047857; 
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); /* Hijau Tua */
     border: 2px solid #10b981; 
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
 }
+.safe .text-content { color: #34d399; }
 
+/* Danger State (Dark Red) */
 .danger { 
-    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-    color: #dc2626; 
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); /* Merah Tua */
     border: 2px solid #ef4444; 
     animation: pulseGlow 2s infinite;
 }
+.danger .text-content { color: #fca5a5; }
 
+/* Error State */
 .error { 
-    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-    color: #991b1b; 
+    background: #450a0a;
     border: 2px solid #dc2626;
 }
 
+/* --- METRIC CARDS (DARK MODE) --- */
 .metric-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    border: 2px solid #e2e8f0;
+    background: #1e293b !important; /* Card abu gelap */
+    border: 1px solid #334155 !important;
     border-radius: 16px;
     padding: 24px 20px;
     text-align: center;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-    transition: all 0.3s ease;
     height: 100%;
 }
 
 .metric-value {
     font-size: 32px;
     font-weight: 800;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 100%); /* Angka Ungu Terang */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
+/* Button Styling */
 button.primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    border: none !important;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
     color: white !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
     font-weight: 700 !important;
-    font-size: 16px !important;
-    padding: 18px 36px !important;
     border-radius: 12px !important;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4) !important;
-    transition: all 0.3s ease !important;
-    letter-spacing: 0.5px;
+    padding: 15px !important;
     margin-top: 20px !important;
 }
-
 button.primary:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5) !important;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.4) !important;
 }
 
+/* Image Container */
 .image-container {
+    border: 1px solid #475569 !important;
+    background-color: #1e293b !important;
     border-radius: 16px !important;
-    overflow: hidden !important;
-    border: 2px solid #e2e8f0 !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
-    height: auto !important;
 }
 
+/* Headers H3 */
 h3 {
+    color: #e2e8f0 !important; 
     font-size: 1.4em !important;
-    font-weight: 700 !important;
-    color: #475569 !important; /* Fixed visibility against white background */
     margin-bottom: 15px !important;
-    letter-spacing: -0.5px;
 }
 
 @keyframes pulseGlow {
-    0%, 100% { 
-        box-shadow: 0 8px 32px rgba(239, 68, 68, 0.2);
-    }
-    50% { 
-        box-shadow: 0 8px 32px rgba(239, 68, 68, 0.4), 0 0 0 8px rgba(239, 68, 68, 0.1);
-    }
+    0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.5); }
 }
 """
 
 # --- APP LAYOUT ---
-with gr.Blocks(css=custom_css, title="Crack Detector", theme=gr.themes.Soft()) as demo:
+# Menggunakan theme default tapi ditimpa CSS custom kita
+with gr.Blocks(css=custom_css, title="Crack Detector", theme=gr.themes.Default()) as demo:
     
     gr.Markdown(
         """
@@ -317,6 +281,7 @@ with gr.Blocks(css=custom_css, title="Crack Detector", theme=gr.themes.Soft()) a
             )
             analyze_btn = gr.Button("Analyze Structure", variant="primary", size="lg")
 
+        # KOLOM KANAN (OUTPUT)
         with gr.Column(scale=1):
             gr.Markdown("### Analysis Results")
 
@@ -329,13 +294,12 @@ with gr.Blocks(css=custom_css, title="Crack Detector", theme=gr.themes.Soft()) a
                 """
             )
             
-            # Row kecil di dalam kolom kanan untuk metrik
             with gr.Row(elem_id="metrics-row"):
                 with gr.Column(min_width=100):
-                    gr.Markdown("<div style='text-align:center; color:#64748b; font-weight:700; margin-bottom:5px'>CONFIDENCE</div>")
+                    gr.Markdown("<div style='text-align:center; color:#94a3b8; font-weight:700; margin-bottom:5px'>CONFIDENCE</div>")
                     conf_out = gr.HTML("<div class='metric-card'><div class='metric-value'>-</div></div>")
                 with gr.Column(min_width=100):
-                    gr.Markdown("<div style='text-align:center; color:#64748b; font-weight:700; margin-bottom:5px'>LATENCY</div>")
+                    gr.Markdown("<div style='text-align:center; color:#94a3b8; font-weight:700; margin-bottom:5px'>LATENCY</div>")
                     time_out = gr.HTML("<div class='metric-card'><div class='metric-value'>-</div></div>")
 
     analyze_btn.click(
