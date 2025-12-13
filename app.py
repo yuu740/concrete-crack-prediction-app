@@ -5,7 +5,6 @@ import numpy as np
 from skimage.feature import hog
 import time
 
-# --- LOGIC SECTON ---
 try:
     model = joblib.load("final_crack_detector_rf.pkl")
 except Exception as e:
@@ -61,14 +60,12 @@ def analyze_crack(image):
             res_html = f"""
             <div class='status-card danger'>
                 <div class='text-content'>Crack Detected</div>
-                <div class='subtitle'>Immediate inspection recommended</div>
             </div>
             """
         else:
             res_html = f"""
             <div class='status-card safe'>
                 <div class='text-content'>No Crack Detected</div>
-                <div class='subtitle'>Structure appears safe</div>
             </div>
             """
         conf_html = f"<div class='metric-card'><div class='metric-value'>{confidence:.1f}%</div></div>"
@@ -82,7 +79,6 @@ def analyze_crack(image):
             "<div class='metric-card'><div class='metric-value'>-</div></div>"
         )
 
-# --- DARK THEME CSS ---
 custom_css = """
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -90,11 +86,10 @@ custom_css = """
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-/* Background Utama Halaman */
 body, .gradio-container {
-    background-color: #0f172a !important; /* Biru Gelap hampir hitam */
+    background-color: #0f172a !important; 
     background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%) !important;
-    color: #e2e8f0 !important; /* Warna text dasar putih abu */
+    color: #e2e8f0 !important; 
 }
 
 .gradio-container {
@@ -105,9 +100,8 @@ body, .gradio-container {
     padding-right: 20px !important;
 }
 
-/* Container Komponen Utama (Kotak Besar) */
 #component-0 {
-    background: rgba(30, 41, 59, 0.7) !important; /* Dark Blue transparan */
+    background: rgba(30, 41, 59, 0.7) !important; 
     backdrop-filter: blur(20px) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 24px !important;
@@ -115,7 +109,6 @@ body, .gradio-container {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Layout Kiri-Kanan */
 .two-col {
     display: flex !important;
     flex-direction: row !important;
@@ -132,19 +125,17 @@ body, .gradio-container {
 .title-container h1 {
     font-size: 2.5em !important;
     font-weight: 800 !important;
-    background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 100%); /* Judul Ungu Muda Terang */
+    background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 100%); 
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin: 0 !important;
 }
 
-/* Labels (Input Image, etc) */
 span, label, p {
     color: #cbd5e1 !important;
 }
 
-/* --- STATUS CARDS (DARK MODE) --- */
 .status-card {
     display: flex;
     flex-direction: column;
@@ -173,37 +164,32 @@ span, label, p {
     color: #e2e8f0;
 }
 
-/* Neutral State (Dark Grey) */
 .neutral { 
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     border: 2px dashed #475569; 
 }
 
-/* Safe State (Dark Green) */
 .safe { 
-    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); /* Hijau Tua */
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); 
     border: 2px solid #10b981; 
     box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
 }
 .safe .text-content { color: #34d399; }
 
-/* Danger State (Dark Red) */
 .danger { 
-    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); /* Merah Tua */
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); 
     border: 2px solid #ef4444; 
     animation: pulseGlow 2s infinite;
 }
 .danger .text-content { color: #fca5a5; }
 
-/* Error State */
 .error { 
     background: #450a0a;
     border: 2px solid #dc2626;
 }
 
-/* --- METRIC CARDS (DARK MODE) --- */
 .metric-card {
-    background: #1e293b !important; /* Card abu gelap */
+    background: #1e293b !important; 
     border: 1px solid #334155 !important;
     border-radius: 16px;
     padding: 24px 20px;
@@ -214,13 +200,12 @@ span, label, p {
 .metric-value {
     font-size: 32px;
     font-weight: 800;
-    background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 100%); /* Angka Ungu Terang */
+    background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 100%); 
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-/* Button Styling */
 button.primary {
     background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
     color: white !important;
@@ -235,14 +220,12 @@ button.primary:hover {
     box-shadow: 0 0 15px rgba(139, 92, 246, 0.4) !important;
 }
 
-/* Image Container */
 .image-container {
     border: 1px solid #475569 !important;
     background-color: #1e293b !important;
     border-radius: 16px !important;
 }
 
-/* Headers H3 */
 h3 {
     color: #e2e8f0 !important; 
     font-size: 1.4em !important;
@@ -255,8 +238,7 @@ h3 {
 }
 """
 
-# --- APP LAYOUT ---
-# Menggunakan theme default tapi ditimpa CSS custom kita
+
 with gr.Blocks(css=custom_css, title="Crack Detector", theme=gr.themes.Default()) as demo:
     
     gr.Markdown(
@@ -269,7 +251,6 @@ with gr.Blocks(css=custom_css, title="Crack Detector", theme=gr.themes.Default()
 
     with gr.Row(elem_classes="two-col"):
 
-        # KOLOM KIRI (INPUT)
         with gr.Column(scale=1): 
             gr.Markdown("### Input Image")
             input_img = gr.Image(
@@ -281,7 +262,6 @@ with gr.Blocks(css=custom_css, title="Crack Detector", theme=gr.themes.Default()
             )
             analyze_btn = gr.Button("Analyze Structure", variant="primary", size="lg")
 
-        # KOLOM KANAN (OUTPUT)
         with gr.Column(scale=1):
             gr.Markdown("### Analysis Results")
 
